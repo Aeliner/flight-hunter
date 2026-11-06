@@ -1,6 +1,6 @@
 {
   "name": "flight-hunter",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Find the cheapest or best-value flights for any trip, the way an obsessive human would: Google Flights (fli), Kiwi and Kayak, then the routes most people never check (wrong-city + hop, positioning to a cheaper gateway, self-transfers, ferries, group-size splits, point-of-sale pricing). Flags visas, bags and tight connections. Re-prices your finalists later with a trip watch. Search only - never books.",
   "author": {
     "name": "Nazareno Alvarez",
@@ -8,6 +8,9 @@
   },
   "homepage": "https://github.com/Aeliner/flight-hunter",
   "repository": "https://github.com/Aeliner/flight-hunter",
+  "documentationUrl": "https://github.com/Aeliner/flight-hunter#readme",
+  "supportUrl": "https://github.com/Aeliner/flight-hunter/issues",
+  "privacyPolicyUrl": "https://github.com/Aeliner/flight-hunter/blob/main/PRIVACY.md",
   "license": "MIT",
   "keywords": [
     "airfare",

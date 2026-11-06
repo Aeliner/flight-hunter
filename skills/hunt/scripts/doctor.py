@@ -17,7 +17,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import flightapis as fa  # noqa: E402
 
-FLI_SRC = "flights[mcp] @ git+https://github.com/punitarani/fli.git"
+FLI_SRC = "flights[mcp] @ git+https://github.com/punitarani/fli.git@881aee5ff4321e81ea2157cb44be94ce6a21dc1b"  # same pin as .mcp.json
 UV_FIX = ('Windows: powershell -c "irm https://astral.sh/uv/install.ps1 | iex"   '
           "mac/linux: curl -LsSf https://astral.sh/uv/install.sh | sh")
 ok = lambda m: print(f"  OK   {m}")

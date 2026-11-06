@@ -30,3 +30,7 @@ Bump `version` in `.claude-plugin/plugin.json`. Users only get an update when it
 ## Ground rules that don't change
 
 Search only, never book. Report only prices a tool or page actually showed. Be gentle with sites. Don't evade bot detection.
+
+## Pinned dependencies
+
+The fli version is pinned to a commit in both `.mcp.json` and `skills/hunt/scripts/doctor.py` (`FLI_SRC`). When Google changes its page and fli ships a fix, bump both to the new commit.

@@ -2,7 +2,7 @@
   "mcpServers": {
     "fli": {
       "command": "uvx",
-      "args": ["--from", "flights[mcp] @ git+https://github.com/punitarani/fli.git", "fli-mcp"]
+      "args": ["--from", "flights[mcp] @ git+https://github.com/punitarani/fli.git@881aee5ff4321e81ea2157cb44be94ce6a21dc1b", "fli-mcp"]
     },
     "kiwi": {
       "type": "http",
