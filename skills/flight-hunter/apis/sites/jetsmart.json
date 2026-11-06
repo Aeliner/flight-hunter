@@ -1,0 +1,83 @@
+{
+  "name": "jetsmart",
+  "baseUrl": "https://jetsmart.com",
+  "operations": [
+    {
+      "name": "fares",
+      "description": "JetSMART lowest fares for every flight from an airport over the next 12 months (USD, per person)",
+      "request": {
+        "method": "GET",
+        "url": "https://origin.jsrtff.it.jetsm.art/availability/plain?_agg=&_meta=&bt_date=2026-11-03+00%3A00%3A00&bt_date=2027-11-03+24%3A00%3A00&pov_c=UY&dep=%7Bdep%7D",
+        "headers": {
+          "accept": "application/json, text/javascript, */*; q=0.01",
+          "accept-language": "en-US,en;q=0.9",
+          "origin": "https://jetsmart.com",
+          "priority": "u=1, i",
+          "referer": "https://jetsmart.com/",
+          "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\", \"Google Chrome\";v=\"156\"",
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": "\"Windows\"",
+          "sec-fetch-dest": "empty",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "cross-site",
+          "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+        }
+      },
+      "slots": [
+        {
+          "param": "dep",
+          "at": [
+            "query:dep"
+          ]
+        }
+      ],
+      "volatile": [],
+      "trigger": {
+        "url": "https://jetsmart.com/uy/es/"
+      },
+      "match": {
+        "method": "GET",
+        "host": "origin.jsrtff.it.jetsm.art",
+        "path": "/availability/plain"
+      },
+      "response": {
+        "format": "json",
+        "contentType": "application/json",
+        "extract": "availability[*]",
+        "pick": [
+          "dep",
+          "arr",
+          "date",
+          "flight=fn",
+          "carrier=cc",
+          "fareClass=c",
+          "fareUsd=p.usd",
+          "taxUsd=i.usd",
+          "totalUsd=pi.usd"
+        ],
+        "shape": {
+          "availability[].arr": "string",
+          "availability[].c": "string",
+          "availability[].cc": "string",
+          "availability[].date": "string",
+          "availability[].dep": "string",
+          "availability[].fn": "string",
+          "availability[].i.usd": "number",
+          "availability[].p.usd": "number",
+          "availability[].pi.usd": "number"
+        }
+      },
+      "params": [
+        {
+          "name": "dep",
+          "type": "string",
+          "required": true,
+          "example": "MVD"
+        }
+      ],
+      "readOnly": true,
+      "minTier": 1,
+      "learnedLoggedIn": true
+    }
+  ]
+}

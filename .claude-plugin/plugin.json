@@ -1,0 +1,15 @@
+{
+  "name": "flight-hunter",
+  "version": "0.3.0",
+  "description": "Find the cheapest or best-value flights the way a human hacker would: Google Flights via fli, Kiwi, Kayak/JetSMART/Buquebus over plain HTTP (no browser), bot-walled airline sites in Chrome, positioning flights, self-transfers, ferries, group-size splits, point-of-sale tricks, a trip watch that re-prices finalists and diffs runs, with visa/bag/connection risk flags. Search only - never books.",
+  "license": "MIT",
+  "keywords": [
+    "airfare",
+    "flights",
+    "google-flights",
+    "kayak",
+    "kiwi",
+    "travel",
+    "trip-watch"
+  ]
+}

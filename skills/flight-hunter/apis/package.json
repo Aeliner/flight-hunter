@@ -1,0 +1,10 @@
+{
+  "name": "flight-hunter-apis",
+  "private": true,
+  "type": "module",
+  "description": "Kayak and JetSMART over plain HTTP via api-anything specs; see README.md",
+  "engines": { "node": ">=22.13.0" },
+  "dependencies": {
+    "api-anything": "0.3.2"
+  }
+}

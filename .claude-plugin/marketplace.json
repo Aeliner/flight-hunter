@@ -1,0 +1,12 @@
+{
+  "name": "flight-hunter",
+  "owner": { "name": "flight-hunter" },
+  "description": "Flight search skill + MCP servers for Claude Code",
+  "plugins": [
+    {
+      "name": "flight-hunter",
+      "source": "./",
+      "description": "Cheapest/best-value flight hunting with fli (Google Flights), Kiwi and browser cross-checks"
+    }
+  ]
+}

@@ -1,0 +1,928 @@
+{
+  "name": "kayak",
+  "baseUrl": "https://www.kayak.com",
+  "operations": [
+    {
+      "name": "start",
+      "request": {
+        "method": "POST",
+        "url": "https://www.kayak.com/i/api/search/dynamic/flights/poll",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://www.kayak.com",
+          "priority": "u=1, i",
+          "referer": "https://www.kayak.com/flights/{origin}-{destination}/{depart}/{return}?sort=price_a",
+          "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\", \"Google Chrome\";v=\"156\"",
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": "\"Windows\"",
+          "sec-fetch-dest": "empty",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "same-origin",
+          "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+          "x-csrf": "",
+          "x-requested-with": "XMLHttpRequest"
+        },
+        "body": "{\"filterParams\":{},\"userSearchParams\":{\"legs\":[{\"origin\":{\"airports\":[\"{origin}\"],\"locationType\":\"airports\"},\"destination\":{\"airports\":[\"{destination}\"],\"locationType\":\"airports\"},\"date\":\"{depart}\",\"flex\":\"exact\"},{\"origin\":{\"airports\":[\"{destination}\"],\"locationType\":\"airports\"},\"destination\":{\"airports\":[\"{origin}\"],\"locationType\":\"airports\"},\"date\":\"{return}\",\"flex\":\"exact\"}],\"passengers\":[\"ADT\"],\"passengerDetails\":[{\"ptc\":\"ADT\"}],\"sortMode\":\"price_a\"},\"searchMetaData\":{\"pageNumber\":1,\"searchTypes\":[]}}"
+      },
+      "slots": [
+        {
+          "param": "origin",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/0/origin/airports/0"
+          ]
+        },
+        {
+          "param": "origin",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/1/destination/airports/0"
+          ]
+        },
+        {
+          "param": "destination",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/0/destination/airports/0"
+          ]
+        },
+        {
+          "param": "destination",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/1/origin/airports/0"
+          ]
+        },
+        {
+          "param": "depart",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/0/date"
+          ]
+        },
+        {
+          "param": "return",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/1/date"
+          ]
+        },
+        {
+          "param": "origin",
+          "at": [
+            "header:referer"
+          ],
+          "template": "https://www.kayak.com/flights/{origin}-{destination}/{depart}/{return}?sort=price_a"
+        },
+        {
+          "ref": "session:start/x-csrf",
+          "at": [
+            "header:x-csrf"
+          ]
+        }
+      ],
+      "volatile": [],
+      "trigger": {
+        "url": "https://www.kayak.com/flights/{origin}-{destination}/{depart}/{return}?sort=price_a"
+      },
+      "match": {
+        "method": "POST",
+        "host": "www.kayak.com",
+        "path": "/i/api/search/dynamic/flights/poll"
+      },
+      "response": {
+        "format": "json",
+        "contentType": "application/json;charset=UTF-8",
+        "extract": ".",
+        "pick": [
+          "searchId",
+          "status"
+        ]
+      },
+      "params": [
+        {
+          "name": "origin",
+          "type": "string",
+          "required": true,
+          "example": "MVD"
+        },
+        {
+          "name": "destination",
+          "type": "string",
+          "required": true,
+          "example": "HND"
+        },
+        {
+          "name": "depart",
+          "type": "string",
+          "required": true,
+          "example": "2027-02-19"
+        },
+        {
+          "name": "return",
+          "type": "string",
+          "required": true,
+          "example": "2027-03-05"
+        }
+      ],
+      "readOnly": true,
+      "minTier": 1,
+      "learnedLoggedIn": false
+    },
+    {
+      "name": "start3",
+      "description": "Start a Kayak round-trip search for 3 adults",
+      "request": {
+        "method": "POST",
+        "url": "https://www.kayak.com/i/api/search/dynamic/flights/poll",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://www.kayak.com",
+          "priority": "u=1, i",
+          "referer": "https://www.kayak.com/flights/{origin}-{destination}/{depart}/{return}/3adults?sort=price_a",
+          "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\", \"Google Chrome\";v=\"156\"",
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": "\"Windows\"",
+          "sec-fetch-dest": "empty",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "same-origin",
+          "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+          "x-csrf": "",
+          "x-requested-with": "XMLHttpRequest"
+        },
+        "body": "{\"filterParams\":{},\"userSearchParams\":{\"legs\":[{\"origin\":{\"airports\":[\"{origin}\"],\"locationType\":\"airports\"},\"destination\":{\"airports\":[\"{destination}\"],\"locationType\":\"airports\"},\"date\":\"{depart}\",\"flex\":\"exact\"},{\"origin\":{\"airports\":[\"{destination}\"],\"locationType\":\"airports\"},\"destination\":{\"airports\":[\"{origin}\"],\"locationType\":\"airports\"},\"date\":\"{return}\",\"flex\":\"exact\"}],\"passengers\":[\"ADT\",\"ADT\",\"ADT\"],\"passengerDetails\":[{\"ptc\":\"ADT\"},{\"ptc\":\"ADT\"},{\"ptc\":\"ADT\"}],\"sortMode\":\"price_a\"},\"searchMetaData\":{\"pageNumber\":1,\"searchTypes\":[]}}"
+      },
+      "slots": [
+        {
+          "param": "origin",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/0/origin/airports/0"
+          ]
+        },
+        {
+          "param": "origin",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/1/destination/airports/0"
+          ]
+        },
+        {
+          "param": "destination",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/0/destination/airports/0"
+          ]
+        },
+        {
+          "param": "destination",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/1/origin/airports/0"
+          ]
+        },
+        {
+          "param": "depart",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/0/date"
+          ]
+        },
+        {
+          "param": "return",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/1/date"
+          ]
+        },
+        {
+          "param": "origin",
+          "at": [
+            "header:referer"
+          ],
+          "template": "https://www.kayak.com/flights/{origin}-{destination}/{depart}/{return}/3adults?sort=price_a"
+        },
+        {
+          "ref": "session:start3/x-csrf",
+          "at": [
+            "header:x-csrf"
+          ]
+        }
+      ],
+      "volatile": [],
+      "trigger": {
+        "url": "https://www.kayak.com/flights/{origin}-{destination}/{depart}/{return}/3adults?sort=price_a"
+      },
+      "match": {
+        "method": "POST",
+        "host": "www.kayak.com",
+        "path": "/i/api/search/dynamic/flights/poll"
+      },
+      "response": {
+        "format": "json",
+        "contentType": "application/json;charset=UTF-8",
+        "extract": ".",
+        "pick": [
+          "searchId",
+          "status"
+        ]
+      },
+      "params": [
+        {
+          "name": "origin",
+          "type": "string",
+          "required": true,
+          "example": "MVD"
+        },
+        {
+          "name": "destination",
+          "type": "string",
+          "required": true,
+          "example": "HND"
+        },
+        {
+          "name": "depart",
+          "type": "string",
+          "required": true,
+          "example": "2027-02-19"
+        },
+        {
+          "name": "return",
+          "type": "string",
+          "required": true,
+          "example": "2027-03-05"
+        }
+      ],
+      "readOnly": true,
+      "minTier": 1,
+      "learnedLoggedIn": false
+    },
+    {
+      "name": "start2",
+      "description": "Start a Kayak round-trip search for 2 adults",
+      "request": {
+        "method": "POST",
+        "url": "https://www.kayak.com/i/api/search/dynamic/flights/poll",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://www.kayak.com",
+          "priority": "u=1, i",
+          "referer": "https://www.kayak.com/flights/{origin}-{destination}/{depart}/{return}/2adults?sort=price_a",
+          "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\", \"Google Chrome\";v=\"156\"",
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": "\"Windows\"",
+          "sec-fetch-dest": "empty",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "same-origin",
+          "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+          "x-csrf": "",
+          "x-requested-with": "XMLHttpRequest"
+        },
+        "body": "{\"filterParams\":{},\"userSearchParams\":{\"legs\":[{\"origin\":{\"airports\":[\"{origin}\"],\"locationType\":\"airports\"},\"destination\":{\"airports\":[\"{destination}\"],\"locationType\":\"airports\"},\"date\":\"{depart}\",\"flex\":\"exact\"},{\"origin\":{\"airports\":[\"{destination}\"],\"locationType\":\"airports\"},\"destination\":{\"airports\":[\"{origin}\"],\"locationType\":\"airports\"},\"date\":\"{return}\",\"flex\":\"exact\"}],\"passengers\":[\"ADT\",\"ADT\"],\"passengerDetails\":[{\"ptc\":\"ADT\"},{\"ptc\":\"ADT\"}],\"sortMode\":\"price_a\"},\"searchMetaData\":{\"pageNumber\":1,\"searchTypes\":[]}}"
+      },
+      "slots": [
+        {
+          "param": "origin",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/0/origin/airports/0"
+          ]
+        },
+        {
+          "param": "origin",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/1/destination/airports/0"
+          ]
+        },
+        {
+          "param": "destination",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/0/destination/airports/0"
+          ]
+        },
+        {
+          "param": "destination",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/1/origin/airports/0"
+          ]
+        },
+        {
+          "param": "depart",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/0/date"
+          ]
+        },
+        {
+          "param": "return",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/1/date"
+          ]
+        },
+        {
+          "param": "origin",
+          "at": [
+            "header:referer"
+          ],
+          "template": "https://www.kayak.com/flights/{origin}-{destination}/{depart}/{return}/2adults?sort=price_a"
+        },
+        {
+          "ref": "session:start2/x-csrf",
+          "at": [
+            "header:x-csrf"
+          ]
+        }
+      ],
+      "volatile": [],
+      "trigger": {
+        "url": "https://www.kayak.com/flights/{origin}-{destination}/{depart}/{return}/2adults?sort=price_a"
+      },
+      "match": {
+        "method": "POST",
+        "host": "www.kayak.com",
+        "path": "/i/api/search/dynamic/flights/poll"
+      },
+      "response": {
+        "format": "json",
+        "contentType": "application/json;charset=UTF-8",
+        "extract": ".",
+        "pick": [
+          "searchId",
+          "status"
+        ]
+      },
+      "params": [
+        {
+          "name": "origin",
+          "type": "string",
+          "required": true,
+          "example": "MVD"
+        },
+        {
+          "name": "destination",
+          "type": "string",
+          "required": true,
+          "example": "HND"
+        },
+        {
+          "name": "depart",
+          "type": "string",
+          "required": true,
+          "example": "2027-02-19"
+        },
+        {
+          "name": "return",
+          "type": "string",
+          "required": true,
+          "example": "2027-03-05"
+        }
+      ],
+      "readOnly": true,
+      "minTier": 1,
+      "learnedLoggedIn": false
+    },
+    {
+      "name": "status",
+      "description": "Status of a Kayak search",
+      "request": {
+        "method": "POST",
+        "url": "https://www.kayak.com/i/api/search/dynamic/flights/poll",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://www.kayak.com",
+          "priority": "u=1, i",
+          "referer": "https://www.kayak.com/flights/{origin}-{destination}/{depart}/{return}?sort=price_a",
+          "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\", \"Google Chrome\";v=\"156\"",
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": "\"Windows\"",
+          "sec-fetch-dest": "empty",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "same-origin",
+          "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+          "x-csrf": "",
+          "x-requested-with": "XMLHttpRequest"
+        },
+        "body": "{\"filterParams\":{},\"userSearchParams\":{\"legs\":[{\"origin\":{\"airports\":[\"{origin}\"],\"locationType\":\"airports\"},\"destination\":{\"airports\":[\"{destination}\"],\"locationType\":\"airports\"},\"date\":\"{depart}\",\"flex\":\"exact\"},{\"origin\":{\"airports\":[\"{destination}\"],\"locationType\":\"airports\"},\"destination\":{\"airports\":[\"{origin}\"],\"locationType\":\"airports\"},\"date\":\"{return}\",\"flex\":\"exact\"}],\"searchId\":\"{searchId}\",\"passengers\":[\"ADT\"],\"passengerDetails\":[{\"ptc\":\"ADT\"}],\"sortMode\":\"price_a\"},\"searchMetaData\":{\"pageNumber\":1,\"searchTypes\":[],\"skipResultsInSecondPhase\":false}}"
+      },
+      "slots": [
+        {
+          "param": "origin",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/0/origin/airports/0"
+          ]
+        },
+        {
+          "param": "origin",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/1/destination/airports/0"
+          ]
+        },
+        {
+          "param": "destination",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/0/destination/airports/0"
+          ]
+        },
+        {
+          "param": "destination",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/1/origin/airports/0"
+          ]
+        },
+        {
+          "param": "depart",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/0/date"
+          ]
+        },
+        {
+          "param": "return",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/1/date"
+          ]
+        },
+        {
+          "param": "searchId",
+          "at": [
+            "body",
+            "json:/userSearchParams/searchId"
+          ]
+        },
+        {
+          "param": "origin",
+          "at": [
+            "header:referer"
+          ],
+          "template": "https://www.kayak.com/flights/{origin}-{destination}/{depart}/{return}?sort=price_a"
+        },
+        {
+          "ref": "session:status/x-csrf",
+          "at": [
+            "header:x-csrf"
+          ]
+        }
+      ],
+      "volatile": [],
+      "trigger": {
+        "url": "https://www.kayak.com/flights/{origin}-{destination}/{depart}/{return}?sort=price_a"
+      },
+      "match": {
+        "method": "POST",
+        "host": "www.kayak.com",
+        "path": "/i/api/search/dynamic/flights/poll"
+      },
+      "response": {
+        "format": "json",
+        "contentType": "application/json;charset=UTF-8",
+        "extract": ".",
+        "pick": [
+          "status",
+          "totalCount",
+          "filteredCount",
+          "searchUrl=searchUrl.url"
+        ]
+      },
+      "params": [
+        {
+          "name": "origin",
+          "type": "string",
+          "required": true,
+          "example": "MVD"
+        },
+        {
+          "name": "destination",
+          "type": "string",
+          "required": true,
+          "example": "HND"
+        },
+        {
+          "name": "depart",
+          "type": "string",
+          "required": true,
+          "example": "2027-02-19"
+        },
+        {
+          "name": "return",
+          "type": "string",
+          "required": true,
+          "example": "2027-03-05"
+        },
+        {
+          "name": "searchId",
+          "type": "string",
+          "required": true,
+          "example": "2TDCIHnObs"
+        }
+      ],
+      "readOnly": true,
+      "minTier": 1,
+      "learnedLoggedIn": false
+    },
+    {
+      "name": "start5",
+      "description": "Start a Kayak round-trip search for 5 adults",
+      "request": {
+        "method": "POST",
+        "url": "https://www.kayak.com/i/api/search/dynamic/flights/poll",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://www.kayak.com",
+          "priority": "u=1, i",
+          "referer": "https://www.kayak.com/flights/{origin}-{destination}/{depart}/{return}/5adults?sort=price_a",
+          "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\", \"Google Chrome\";v=\"156\"",
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": "\"Windows\"",
+          "sec-fetch-dest": "empty",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "same-origin",
+          "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+          "x-csrf": "",
+          "x-requested-with": "XMLHttpRequest"
+        },
+        "body": "{\"filterParams\":{},\"userSearchParams\":{\"legs\":[{\"origin\":{\"airports\":[\"{origin}\"],\"locationType\":\"airports\"},\"destination\":{\"airports\":[\"{destination}\"],\"locationType\":\"airports\"},\"date\":\"{depart}\",\"flex\":\"exact\"},{\"origin\":{\"airports\":[\"{destination}\"],\"locationType\":\"airports\"},\"destination\":{\"airports\":[\"{origin}\"],\"locationType\":\"airports\"},\"date\":\"{return}\",\"flex\":\"exact\"}],\"passengers\":[\"ADT\",\"ADT\",\"ADT\",\"ADT\",\"ADT\"],\"passengerDetails\":[{\"ptc\":\"ADT\"},{\"ptc\":\"ADT\"},{\"ptc\":\"ADT\"},{\"ptc\":\"ADT\"},{\"ptc\":\"ADT\"}],\"sortMode\":\"price_a\"},\"searchMetaData\":{\"pageNumber\":1,\"searchTypes\":[]}}"
+      },
+      "slots": [
+        {
+          "param": "origin",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/0/origin/airports/0"
+          ]
+        },
+        {
+          "param": "origin",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/1/destination/airports/0"
+          ]
+        },
+        {
+          "param": "destination",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/0/destination/airports/0"
+          ]
+        },
+        {
+          "param": "destination",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/1/origin/airports/0"
+          ]
+        },
+        {
+          "param": "depart",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/0/date"
+          ]
+        },
+        {
+          "param": "return",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/1/date"
+          ]
+        },
+        {
+          "param": "origin",
+          "at": [
+            "header:referer"
+          ],
+          "template": "https://www.kayak.com/flights/{origin}-{destination}/{depart}/{return}/5adults?sort=price_a"
+        },
+        {
+          "ref": "session:start5/x-csrf",
+          "at": [
+            "header:x-csrf"
+          ]
+        }
+      ],
+      "volatile": [],
+      "trigger": {
+        "url": "https://www.kayak.com/flights/{origin}-{destination}/{depart}/{return}/5adults?sort=price_a"
+      },
+      "match": {
+        "method": "POST",
+        "host": "www.kayak.com",
+        "path": "/i/api/search/dynamic/flights/poll"
+      },
+      "response": {
+        "format": "json",
+        "contentType": "application/json;charset=UTF-8",
+        "extract": ".",
+        "pick": [
+          "searchId",
+          "status"
+        ]
+      },
+      "params": [
+        {
+          "name": "origin",
+          "type": "string",
+          "required": true,
+          "example": "MVD"
+        },
+        {
+          "name": "destination",
+          "type": "string",
+          "required": true,
+          "example": "HND"
+        },
+        {
+          "name": "depart",
+          "type": "string",
+          "required": true,
+          "example": "2027-02-19"
+        },
+        {
+          "name": "return",
+          "type": "string",
+          "required": true,
+          "example": "2027-03-05"
+        }
+      ],
+      "readOnly": true,
+      "minTier": 1,
+      "learnedLoggedIn": false
+    },
+    {
+      "name": "startOneway",
+      "description": "Start a Kayak one-way search, 1 adult",
+      "request": {
+        "method": "POST",
+        "url": "https://www.kayak.com/i/api/search/dynamic/flights/poll",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://www.kayak.com",
+          "priority": "u=1, i",
+          "referer": "https://www.kayak.com/flights/{origin}-{destination}/{depart}?sort=price_a",
+          "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\", \"Google Chrome\";v=\"156\"",
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": "\"Windows\"",
+          "sec-fetch-dest": "empty",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "same-origin",
+          "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+          "x-csrf": "",
+          "x-requested-with": "XMLHttpRequest"
+        },
+        "body": "{\"filterParams\":{},\"userSearchParams\":{\"legs\":[{\"origin\":{\"airports\":[\"{origin}\"],\"locationType\":\"airports\"},\"destination\":{\"airports\":[\"{destination}\"],\"locationType\":\"airports\"},\"date\":\"{depart}\",\"flex\":\"exact\"}],\"passengers\":[\"ADT\"],\"passengerDetails\":[{\"ptc\":\"ADT\"}],\"sortMode\":\"price_a\"},\"searchMetaData\":{\"pageNumber\":1,\"searchTypes\":[]}}"
+      },
+      "slots": [
+        {
+          "param": "origin",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/0/origin/airports/0"
+          ]
+        },
+        {
+          "param": "destination",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/0/destination/airports/0"
+          ]
+        },
+        {
+          "param": "depart",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/0/date"
+          ]
+        },
+        {
+          "param": "origin",
+          "at": [
+            "header:referer"
+          ],
+          "template": "https://www.kayak.com/flights/{origin}-{destination}/{depart}?sort=price_a"
+        },
+        {
+          "ref": "session:startOneway/x-csrf",
+          "at": [
+            "header:x-csrf"
+          ]
+        }
+      ],
+      "volatile": [],
+      "trigger": {
+        "url": "https://www.kayak.com/flights/{origin}-{destination}/{depart}?sort=price_a"
+      },
+      "match": {
+        "method": "POST",
+        "host": "www.kayak.com",
+        "path": "/i/api/search/dynamic/flights/poll"
+      },
+      "response": {
+        "format": "json",
+        "contentType": "application/json;charset=UTF-8",
+        "extract": ".",
+        "pick": [
+          "searchId",
+          "status"
+        ]
+      },
+      "params": [
+        {
+          "name": "origin",
+          "type": "string",
+          "required": true,
+          "example": "GIG"
+        },
+        {
+          "name": "destination",
+          "type": "string",
+          "required": true,
+          "example": "JFK"
+        },
+        {
+          "name": "depart",
+          "type": "string",
+          "required": true,
+          "example": "2027-02-18"
+        }
+      ],
+      "readOnly": true,
+      "minTier": 1,
+      "learnedLoggedIn": false
+    },
+    {
+      "name": "poll",
+      "description": "Poll a Kayak search by searchId; results sorted by price",
+      "request": {
+        "method": "POST",
+        "url": "https://www.kayak.com/i/api/search/dynamic/flights/poll",
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://www.kayak.com",
+          "priority": "u=1, i",
+          "referer": "https://www.kayak.com/flights/{origin}-{destination}/{depart}/{return}?sort=price_a",
+          "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\", \"Google Chrome\";v=\"156\"",
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": "\"Windows\"",
+          "sec-fetch-dest": "empty",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "same-origin",
+          "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+          "x-csrf": "",
+          "x-requested-with": "XMLHttpRequest"
+        },
+        "body": "{\"filterParams\":{},\"userSearchParams\":{\"legs\":[{\"origin\":{\"airports\":[\"{origin}\"],\"locationType\":\"airports\"},\"destination\":{\"airports\":[\"{destination}\"],\"locationType\":\"airports\"},\"date\":\"{depart}\",\"flex\":\"exact\"},{\"origin\":{\"airports\":[\"{destination}\"],\"locationType\":\"airports\"},\"destination\":{\"airports\":[\"{origin}\"],\"locationType\":\"airports\"},\"date\":\"{return}\",\"flex\":\"exact\"}],\"searchId\":\"{searchId}\",\"passengers\":[\"ADT\"],\"passengerDetails\":[{\"ptc\":\"ADT\"}],\"sortMode\":\"price_a\"},\"searchMetaData\":{\"pageNumber\":1,\"searchTypes\":[],\"skipResultsInSecondPhase\":false}}"
+      },
+      "slots": [
+        {
+          "param": "origin",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/0/origin/airports/0"
+          ]
+        },
+        {
+          "param": "origin",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/1/destination/airports/0"
+          ]
+        },
+        {
+          "param": "destination",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/0/destination/airports/0"
+          ]
+        },
+        {
+          "param": "destination",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/1/origin/airports/0"
+          ]
+        },
+        {
+          "param": "depart",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/0/date"
+          ]
+        },
+        {
+          "param": "return",
+          "at": [
+            "body",
+            "json:/userSearchParams/legs/1/date"
+          ]
+        },
+        {
+          "param": "searchId",
+          "at": [
+            "body",
+            "json:/userSearchParams/searchId"
+          ]
+        },
+        {
+          "param": "origin",
+          "at": [
+            "header:referer"
+          ],
+          "template": "https://www.kayak.com/flights/{origin}-{destination}/{depart}/{return}?sort=price_a"
+        },
+        {
+          "ref": "session:poll/x-csrf",
+          "at": [
+            "header:x-csrf"
+          ]
+        }
+      ],
+      "volatile": [],
+      "trigger": {
+        "url": "https://www.kayak.com/flights/{origin}-{destination}/{depart}/{return}?sort=price_a"
+      },
+      "match": {
+        "method": "POST",
+        "host": "www.kayak.com",
+        "path": "/i/api/search/dynamic/flights/poll"
+      },
+      "response": {
+        "format": "json",
+        "contentType": "application/json;charset=UTF-8",
+        "extract": "results[*]",
+        "pick": [
+          "type",
+          "price=bookingOptions[0].displayPrice.price",
+          "seller=bookingOptions[0].providerCode",
+          "carryOn=bookingOptions[0].fees.carryOnDisplay",
+          "checkedBag=bookingOptions[0].fees.checkedBagDisplay",
+          "outLeg=legs[0].id",
+          "backLeg=legs[1].id",
+          "outDep=bookingOptions[0].legFarings[0].approxDepartureTime",
+          "outArr=bookingOptions[0].legFarings[0].approxArrivalTime",
+          "backDep=bookingOptions[0].legFarings[1].approxDepartureTime",
+          "backArr=bookingOptions[0].legFarings[1].approxArrivalTime",
+          "link=shareableUrl",
+          "providers=totalProviders",
+          "hacker=hasHackerFares"
+        ]
+      },
+      "params": [
+        {
+          "name": "origin",
+          "type": "string",
+          "required": true,
+          "example": "MVD"
+        },
+        {
+          "name": "destination",
+          "type": "string",
+          "required": true,
+          "example": "HND"
+        },
+        {
+          "name": "depart",
+          "type": "string",
+          "required": true,
+          "example": "2027-02-19"
+        },
+        {
+          "name": "return",
+          "type": "string",
+          "required": true,
+          "example": "2027-03-05"
+        },
+        {
+          "name": "searchId",
+          "type": "string",
+          "required": true,
+          "example": "2UDCMnqu_Q"
+        }
+      ],
+      "readOnly": true,
+      "minTier": 1,
+      "learnedLoggedIn": false
+    }
+  ]
+}
