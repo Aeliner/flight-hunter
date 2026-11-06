@@ -12,13 +12,19 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import flightapis as fa  # noqa: E402
 
+try:
+    VERSION = json.loads((HERE.parents[2] / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8"))["version"]
+except (OSError, ValueError, KeyError):
+    VERSION = "dev"
+
 DATE = {"type": "string", "description": "YYYY-MM-DD"}
 IATA = {"type": "string", "description": "IATA airport or city code, e.g. MVD, GIG, NYC"}
 TOOLS = [
     {"name": "kayak_search",
      "description": "Kayak fares over plain HTTP (no browser). Round trip for 1, 2, 3 or 5 adults, or one-way for "
                     "1 adult. Per-person USD prices, seller (airline or OTA), bags, times, link; cheapest first. "
-                    "Takes ~10-25 s. Kayak blocks after heavy use: keep it to a few dozen searches a day.",
+                    "Takes ~10-25 s. Kayak blocks heavy users, so calls are spaced and capped per day "
+                    "(shared with the trip watch): spend them on finalists, not exploration.",
      "inputSchema": {"type": "object", "required": ["origin", "destination", "depart"], "properties": {
          "origin": IATA, "destination": IATA, "depart": DATE,
          "return": {**DATE, "description": "YYYY-MM-DD; omit for one-way"},
@@ -90,7 +96,7 @@ def main():
         if method == "initialize":
             reply(id_, {"protocolVersion": msg.get("params", {}).get("protocolVersion", "2025-06-18"),
                         "capabilities": {"tools": {}},
-                        "serverInfo": {"name": "flight-apis", "version": "0.3.0"}})
+                        "serverInfo": {"name": "flight-apis", "version": VERSION}})
         elif method == "tools/list":
             reply(id_, {"tools": TOOLS})
         elif method == "tools/call":
@@ -98,10 +104,13 @@ def main():
             try:
                 out = call_tool(p.get("name"), p.get("arguments") or {})
                 reply(id_, {"content": [{"type": "text", "text": json.dumps(out, ensure_ascii=False)}]})
+            except fa.BudgetSpent as e:
+                reply(id_, {"isError": True, "content": [{"type": "text", "text":
+                      f"{e}\nDon't retry Kayak today. Use fli / Kiwi, or Claude in Chrome on kayak.com."}]})
             except fa.ApiBlocked as e:
                 reply(id_, {"isError": True, "content": [{"type": "text", "text":
                       f"{e}\nKayak blocked this machine. Don't retry now. Ask the user to run once: "
-                      f'npx --prefix "{fa.APIS}" api-anything login kayak --window   (load Kayak in the window, then close it). '
+                      f"{fa.LOGIN_CMD}   (load Kayak in the window, then close it). "
                       f"Meanwhile use fli / Kiwi, or Claude in Chrome."}]})
             except Exception as e:  # report tool failures to the model rather than killing the server
                 reply(id_, {"isError": True, "content": [{"type": "text", "text": f"{type(e).__name__}: {e}"}]})

@@ -149,6 +149,7 @@ Findings from the Nov 2026 Japan hunt:
   - It shows a price matrix by airline. It was **$400+ pricier** than Kayak for the same Iberia flights ($2,179 vs $1,770), even on Ciberlunes.
   - Check it only when a user's card gives installments or Despegar-specific promos.
 - **Turismocity** (AR/UY) is a metasearch like Kayak, with local OTAs.
+- **Elsewhere,** each market has its own big OTA or metasearch, e.g. Trip.com (Asia), MakeMyTrip (India), Opodo/eDreams (Europe), Almosafer (Middle East). Same rule: check one only when the user's card or location gets installments or local promos, and log what it showed. None of these was tested; note any bot wall in the report.
 
 ## Sites that wasted time
 

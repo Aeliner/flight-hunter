@@ -2,6 +2,13 @@
 
 Read this when the trip starts or ends in the Southern Cone. Re-check anything time-sensitive, especially visas and taxes.
 
+This is the first regional pack. Packs for other regions follow the same shape (airports and ground links,
+visas for local passports, pricing quirks). See CONTRIBUTING.md in the plugin repo.
+
+## Regional tools
+- `jetsmart_fares` (flight-apis MCP): JetSMART's own 12-month lowest-fare cache from an airport (Chile, Argentina, Peru, Colombia, Uruguay, Brazil routes). One call, 1–2 s, 1-person base fares. Good for positioning legs Google underprices or misses.
+- `buquebus_fares`: every Buquebus sailing MVD/COL/PDE ↔ BUE with seat class and tariff, total for the group.
+
 ## Airports and ground links
 - **Montevideo (MVD).** Few long-haul options: LATAM via SCL/LIM/GRU, Copa via PTY, AA nonstop to MIA, Iberia/Air Europa to MAD. Always compare with Buenos Aires and Brazil gateways.
 - **Buenos Aires: EZE (international) and AEP (city, regional plus some international).** They're about 1h apart by road, so an AEP arrival with an EZE departure is an airport change. Comma-search `EZE,AEP`; Kayak's `BUE` covers both.

@@ -1,15 +1,44 @@
 {
   "name": "flight-hunter",
-  "version": "0.3.0",
-  "description": "Find the cheapest or best-value flights the way a human hacker would: Google Flights via fli, Kiwi, Kayak/JetSMART/Buquebus over plain HTTP (no browser), bot-walled airline sites in Chrome, positioning flights, self-transfers, ferries, group-size splits, point-of-sale tricks, a trip watch that re-prices finalists and diffs runs, with visa/bag/connection risk flags. Search only - never books.",
+  "version": "0.4.0",
+  "description": "Find the cheapest or best-value flights for any trip, the way an obsessive human would: Google Flights (fli), Kiwi and Kayak, then the routes most people never check (wrong-city + hop, positioning to a cheaper gateway, self-transfers, ferries, group-size splits, point-of-sale pricing). Flags visas, bags and tight connections. Re-prices your finalists later with a trip watch. Search only - never books.",
+  "author": {
+    "name": "Nazareno Alvarez",
+    "url": "https://github.com/Aeliner"
+  },
+  "homepage": "https://github.com/Aeliner/flight-hunter",
+  "repository": "https://github.com/Aeliner/flight-hunter",
   "license": "MIT",
   "keywords": [
     "airfare",
     "flights",
+    "cheap-flights",
     "google-flights",
     "kayak",
     "kiwi",
     "travel",
     "trip-watch"
-  ]
+  ],
+  "userConfig": {
+    "home_airports": {
+      "type": "string",
+      "title": "Home airports",
+      "description": "IATA codes you usually fly from, comma-separated (e.g. LIS, or JFK,EWR,LGA). Leave blank to be asked each hunt."
+    },
+    "passports": {
+      "type": "string",
+      "title": "Passport nationalities",
+      "description": "Countries of the passports you travel on (e.g. Germany, or Uruguay,Italy). Used for visa and transit checks. Leave blank to be asked."
+    },
+    "currency": {
+      "type": "string",
+      "title": "Your currency",
+      "description": "Also show totals in this currency besides USD (e.g. EUR, BRL). Leave blank for USD only."
+    },
+    "trips_dir": {
+      "type": "directory",
+      "title": "Trips folder",
+      "description": "Where each hunt saves its folder (searches, results.csv, report.md, trip.json). Leave blank to use the folder Claude Code is running in."
+    }
+  }
 }

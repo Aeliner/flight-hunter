@@ -1,12 +1,17 @@
 {
   "name": "flight-hunter",
-  "owner": { "name": "flight-hunter" },
-  "description": "Flight search skill + MCP servers for Claude Code",
+  "owner": {
+    "name": "Nazareno Alvarez",
+    "url": "https://github.com/Aeliner"
+  },
+  "description": "Flight search skills + MCP servers for Claude Code",
   "plugins": [
     {
       "name": "flight-hunter",
       "source": "./",
-      "description": "Cheapest/best-value flight hunting with fli (Google Flights), Kiwi and browser cross-checks"
+      "description": "Cheapest/best-value flight hunting: Google Flights (fli), Kiwi, Kayak, hidden routes, trip watch",
+      "category": "travel",
+      "tags": ["flights", "travel", "airfare"]
     }
   ]
 }

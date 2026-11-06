@@ -3,7 +3,7 @@
   python watch.py TRIP.json [--out DIR] [--only id1,id2] [--no-kayak] [--kayak-budget 20] [--pause 4]
 
 TRIP.json (see references/watch.md for the full format):
-  {"name": "...", "group": 5, "alertDrop": 50, "workspace": "C:/trips/japan",
+  {"name": "...", "group": 5, "alertDrop": 50, "workspace": "~/trips/tokyo-feb",
    "finalists": [{"id": "rio", "label": "Rio + JAL", "notes": "US visa",
                   "baseline": {"date": "2026-11-02", "pp": 1629},
                   "legs": [{"id": "pos", "label": "MVD-GIG", "from": "MVD", "to": "GIG", "date": "2027-02-19",
@@ -63,7 +63,7 @@ class Runner:
                     self.cache[key] = None
                     return None
                 if self.calls.get("kayak"):
-                    time.sleep(self.pause)
+                    time.sleep(max(0, self.pause - fa.KAYAK_GAP))  # flightapis already spaces Kayak calls
                 self.kayak_left -= 1
                 rows = fa.kayak(o, d, day, ret, adults, top=15)
             elif source == "fli":
@@ -298,7 +298,7 @@ def report(trip, results, run, prev_name, prev, out_dir):
     if run.errors:
         lines += ["", "## Not checked / errors", ""] + [f"- {e}" for e in run.errors]
     lines += ["", "Fares change constantly. Re-check on the seller's site right before buying.",
-              "Not covered by this API run: LATAM, Gol, Despegar, Copa, Skyscanner, ZIPAIR, Iberia direct (bot walls; use Chrome)."]
+              "Not covered by this API run: Skyscanner, airline websites and other bot-walled sites (check them in Chrome)."]
     (out_dir / "report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     return alerts
 
@@ -314,7 +314,7 @@ def main():
     a = ap.parse_args()
     trip_path = Path(a.trip)
     trip = json.loads(trip_path.read_text(encoding="utf-8"))
-    base = Path(a.out or trip.get("workspace") or trip_path.parent)
+    base = Path(a.out or trip.get("workspace") or trip_path.parent).expanduser()
     today = date.today().isoformat()
     out_dir = base / today
     (out_dir / "raw").mkdir(parents=True, exist_ok=True)

@@ -1,4 +1,9 @@
 __pycache__/
 *.pyc
-*-workspace/
+.venv/
 node_modules/
+*.zip
+*-workspace/
+evals/results/
+# trip folders from local test hunts
+trips/

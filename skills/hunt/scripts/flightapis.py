@@ -5,28 +5,50 @@
   python flightapis.py jetsmart MVD GIG 2027-02-19 [--days 3]        # 12-month fare cache, per person
   python flightapis.py buquebus MVD BUE 2026-11-20 [--adults 2]      # ferry, USD
   python flightapis.py fli MVD GIG 2027-02-19 [--return ...] [--adults 5]
-  python flightapis.py doctor                                        # node, api-anything, specs, Kayak session
+  python flightapis.py doctor                                        # same as doctor.py --quick
 
 Row: source, origin, dest, depart, ret, adults, price_pp, price_total, currency, seller, carriers,
 dep_time, arr_time, back_dep, back_arr, stops, bags, link, note. Prices are USD unless currency says.
-Kayak and JetSMART need Node 22.13+ and `npm install` in ../apis (doctor says how). A blocked Kayak
-raises ApiBlocked: the user runs `npx --prefix <apis> api-anything login kayak --window` once.
+Kayak and JetSMART need Node 22.13+ and the npm install that `doctor.py --fix` does. A blocked Kayak
+raises ApiBlocked: the user runs `npx --prefix ~/.flight-hunter/apis api-anything login kayak --window` once.
+
+State lives in FLIGHT_HUNTER_HOME (default ~/.flight-hunter), not next to this file: an installed plugin
+sits in a versioned cache that each update replaces. The node side (aa.mjs, sites/, package.json) is
+copied there from ../apis and `npm install`ed there.
 """
 import argparse
+import filecmp
+import hashlib
 import json
+import os
 import re
 import shutil
 import subprocess
 import sys
-from datetime import date, timedelta
+import time
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
-APIS = Path(__file__).resolve().parent.parent / "apis"
-sys.path.insert(0, str(APIS))
+HOME = Path(os.environ.get("FLIGHT_HUNTER_HOME") or Path.home() / ".flight-hunter")
+APIS_SRC = Path(__file__).resolve().parent.parent / "apis"  # shipped with the plugin
+APIS = HOME / "apis"  # what node runs; survives plugin updates
+AA_HOME = Path(os.environ.get("API_ANYTHING_HOME") or Path.home() / ".api-anything")
+sys.path.insert(0, str(APIS_SRC))
 import buquebus  # noqa: E402
+
+# Kayak blocks after heavy use. One budget and spacing for every caller (MCP tool, watch.py, CLI).
+KAYAK_DAILY = int(os.environ.get("FLIGHT_HUNTER_KAYAK_DAILY", "40"))
+KAYAK_GAP = 4  # seconds between Kayak searches
+KAYAK_COOLDOWN = 600  # seconds to leave Kayak alone after a block
+USAGE = HOME / "kayak-usage.json"
+LOGIN_CMD = f'npx --prefix "{APIS}" api-anything login kayak --window'
 
 
 class ApiBlocked(RuntimeError):
+    pass
+
+
+class BudgetSpent(ApiBlocked):
     pass
 
 
@@ -34,13 +56,85 @@ class ApiError(RuntimeError):
     pass
 
 
+def sync_apis():
+    """Copy the plugin's node files into HOME/apis (and specs into api-anything) when they differ."""
+    APIS.mkdir(parents=True, exist_ok=True)
+    (APIS / "sites").mkdir(exist_ok=True)
+    files = ["aa.mjs", "package.json", "package-lock.json"] + [f"sites/{p.name}" for p in (APIS_SRC / "sites").glob("*.json")]
+    for f in files:
+        src, dst = APIS_SRC / f, APIS / f
+        if not dst.exists() or not filecmp.cmp(src, dst, shallow=False):
+            shutil.copyfile(src, dst)
+    if (AA_HOME / "sites").exists():  # specs installed before: keep them current with the plugin
+        for p in (APIS_SRC / "sites").glob("*.json"):
+            dst = AA_HOME / "sites" / p.name
+            if not dst.exists() or not filecmp.cmp(p, dst, shallow=False):
+                shutil.copyfile(p, dst)
+
+
+def _pkg_hash():
+    return hashlib.sha256((APIS_SRC / "package-lock.json").read_bytes()).hexdigest()[:16]
+
+
+def needs_install():
+    """True until `npm install` has run in HOME/apis for the plugin's current package-lock.json."""
+    stamp = APIS / ".installed"
+    return not (APIS / "node_modules" / "api-anything").exists() or         not stamp.exists() or stamp.read_text(encoding="utf-8").strip() != _pkg_hash()
+
+
+def mark_installed():
+    (APIS / ".installed").write_text(_pkg_hash(), encoding="utf-8")
+
+
+def _usage():
+    try:
+        u = json.loads(USAGE.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        u = {}
+    if u.get("date") != date.today().isoformat():
+        u = {"date": date.today().isoformat(), "count": 0, "last": u.get("last", 0), "blocked_at": u.get("blocked_at", 0)}
+    return u
+
+
+def _save_usage(u):
+    HOME.mkdir(parents=True, exist_ok=True)
+    USAGE.write_text(json.dumps(u), encoding="utf-8")
+
+
+def kayak_gate():
+    """Raise if Kayak is cooling down or today's budget is spent; otherwise wait out the gap and count the call."""
+    u = _usage()
+    session = AA_HOME / "sessions" / "kayak.json"
+    relogged = session.exists() and session.stat().st_mtime > u.get("blocked_at", 0)
+    if u.get("blocked_at") and not relogged and time.time() - u["blocked_at"] < KAYAK_COOLDOWN:
+        until = datetime.fromtimestamp(u["blocked_at"] + KAYAK_COOLDOWN).strftime("%H:%M")
+        raise ApiBlocked(f"Kayak blocked this machine earlier; leaving it alone until {until}. "
+                         f"To clear it now, the user runs: {LOGIN_CMD}")
+    if u["count"] >= KAYAK_DAILY:
+        raise BudgetSpent(f"today's Kayak budget is spent ({u['count']}/{KAYAK_DAILY} searches). Kayak blocks heavy "
+                          f"users, so carry on with fli/Kiwi. Raise it with FLIGHT_HUNTER_KAYAK_DAILY if you must.")
+    wait = u.get("last", 0) + KAYAK_GAP - time.time()
+    if wait > 0:
+        time.sleep(wait)
+    u["count"] += 1
+    u["last"] = time.time()
+    _save_usage(u)
+
+
+def kayak_blocked_now():
+    u = _usage()
+    u["blocked_at"] = time.time()
+    _save_usage(u)
+
+
 def _node(*args, timeout=180):
     node = shutil.which("node")
     if not node:
-        raise ApiError("node not found: install Node.js 22.13+ (https://nodejs.org)")
-    if not (APIS / "node_modules" / "api-anything").exists():
-        raise ApiError(f"api-anything not installed: run `npm install --prefix \"{APIS}\"` then "
-                       f"`node \"{APIS / 'aa.mjs'}\" install`")
+        raise ApiError("node not found: install Node.js 22.13+ (https://nodejs.org), then run the flight-hunter setup")
+    sync_apis()
+    if needs_install():
+        raise ApiError("Kayak/JetSMART support isn't installed (or the plugin update changed it). "
+                       "Run the flight-hunter setup: doctor.py --fix")
     p = subprocess.run([node, str(APIS / "aa.mjs"), *args], capture_output=True, text=True,
                        encoding="utf-8", errors="replace", timeout=timeout)
     try:
@@ -49,6 +143,8 @@ def _node(*args, timeout=180):
         raise ApiError((p.stderr or p.stdout)[-400:])
     if not d.get("ok"):
         if d.get("class") in ("blocked", "auth", "rate"):
+            if args[0] == "kayak":
+                kayak_blocked_now()
             raise ApiBlocked(f'{args[0]}: {d.get("class")} - {str(d.get("reason"))[:200]}')
         raise ApiError(f'{args[0]}: {d.get("class")} - {str(d.get("reason"))[:300]}')
     return d
@@ -64,10 +160,14 @@ def row(**kw):
 
 def _kayak_carriers(leg_id):
     # leg ids look like MVDHND1803045600000IB1701803135600000IB719...: 13-digit stamp + carrier per segment
-    return re.findall(r"\d{13}([A-Z0-9]{2})\d", leg_id or "")
+    # the stamp is epoch ms (17xx-19xx...) and an IATA code has a letter, so flight-number digits can't pose as either
+    return re.findall(r"1[7-9]\d{11}([A-Z][A-Z0-9]|[0-9][A-Z])", leg_id or "")
 
 
 def kayak(origin, dest, depart, ret=None, adults=1, top=10):
+    if (ret and adults not in (1, 2, 3, 5)) or (not ret and adults != 1):
+        raise ApiError("kayak: round trips take 1, 2, 3 or 5 adults; one-ways take 1 adult")
+    kayak_gate()
     d = _node("kayak", origin, dest, depart, ret or "ow", str(adults))
     search = f"https://www.kayak.com/flights/{origin}-{dest}/{depart}" + (f"/{ret}" if ret else "") + \
              (f"/{adults}adults" if adults > 1 else "") + "?sort=price_a"
@@ -158,27 +258,8 @@ def fli(origin, dest, depart, ret=None, adults=1, stops="ANY", top=10):
 
 
 def doctor():
-    checks = []
-    node = shutil.which("node")
-    if node:
-        v = subprocess.run([node, "--version"], capture_output=True, text=True).stdout.strip()
-        major, minor = (int(x) for x in v.lstrip("v").split(".")[:2])
-        checks.append(("node " + v, (major, minor) >= (22, 13), "install Node.js 22.13+ from https://nodejs.org"))
-    else:
-        checks.append(("node", False, "install Node.js 22.13+ from https://nodejs.org"))
-    has_aa = (APIS / "node_modules" / "api-anything").exists()
-    checks.append(("api-anything in apis/node_modules", has_aa, f'npm install --prefix "{APIS}"'))
-    home = Path.home() / ".api-anything"
-    specs = all((home / "sites" / f"{s}.json").exists() for s in ("kayak", "jetsmart"))
-    checks.append(("Kayak + JetSMART specs installed", specs, f'node "{APIS / "aa.mjs"}" install'))
-    session = (home / "sessions" / "kayak.json").exists()
-    checks.append(("Kayak session", session,
-                   f'npx --prefix "{APIS}" api-anything login kayak --window   (load Kayak once in the window, then close it)'))
-    checks.append(("fli CLI", bool(shutil.which("fli")),
-                   'uv tool install "flights[mcp] @ git+https://github.com/punitarani/fli.git"'))
-    for name, good, fix in checks:
-        print(f"  {'OK  ' if good else 'MISS'} {name}" + ("" if good else f"\n       fix: {fix}"))
-    print("  OK   Buquebus (stdlib, no setup)")
+    import doctor as doc  # the full check lives in doctor.py
+    doc.main(["--quick"])
 
 
 def main():
